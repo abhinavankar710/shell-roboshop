@@ -4,16 +4,23 @@ spinner() {
     local pid=$1
     local delay=0.1
     local spinstr='|/-\'
-    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
-        local temp=${spinstr#?}
-        printf " [%c]  " "$spinstr"
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\b\b\b\b\b\b"
+    while kill -0 $pid 2>/dev/null; do
+        for i in $(seq 0 $((${#spinstr}-1))); do
+            printf "\rInstalling MongoDB... [%c]" "${spinstr:$i:1}"
+            sleep $delay
+        done
     done
-    # Clear spinner characters after loop ends
-    printf "      \b\b\b\b\b\b"
+    # Clear line after spinner ends
+    printf "\r\033[K"
 }
+
+echo -ne "Installing MongoDB..."
+dnf install -y mongodb-org &>>$LOG_FILE &   
+pid=$!
+spinner $pid
+wait $pid
+VALIDATE $? "MongoDB Installation"
+
 
 USERID=$(id -u)
 R="\e[31m"
