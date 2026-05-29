@@ -14,14 +14,6 @@ spinner() {
     printf "\r\033[K"
 }
 
-echo -ne "Installing MongoDB..."
-dnf install -y mongodb-org &>>$LOG_FILE &   
-pid=$!
-spinner $pid
-wait $pid
-VALIDATE $? "MongoDB Installation"
-
-
 USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
@@ -48,6 +40,8 @@ VALIDATE(){
         echo -e "$2...$G{Success}$N" | tee -a $LOG_FILE
     fi
 }
+
+cp mongodb.repo /etc/yum.repos.d/mongodb.repo &>>$LOG_FILE
 
 dnf list installed mongodb-org &>>$LOG_FILE
 if [ $? -ne 0 ]; then
