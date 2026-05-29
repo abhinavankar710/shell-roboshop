@@ -26,5 +26,6 @@ do
     fi
         # Update the DNS record in Route53
         aws route53 change-resource-record-sets --hosted-zone-id "$ZONE_ID" --change-batch '{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{"Name":"'"$RECORD_NAME"'","Type":"A","TTL":1,"ResourceRecords":[{"Value":"'"$IP"'"}]}}]}' &>>/dev/null
-        echo "Updated Route53 Record: "$RECORD_NAME" → For The Instance "$instance":"$IP $IP_TYPE\n""
+        echo "Updated Route53 Record: "$RECORD_NAME" → For The Instance "$instance":"$IP $IP_TYPE""
+        echo
 done
