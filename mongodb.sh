@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Script execution started at: $(date)" | tee -a $LOG_FILE
+
 spinner() {
     local pid=$1
     local delay=0.1
@@ -20,17 +22,16 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 
-LOGS_FOLDER="/var/log/shell-roboshop"
-SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
-LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" 
-
-mkdir -p $LOGS_FOLDER &>>/dev/null
-echo "Script execution started at: $(date)" | tee -a $LOG_FILE
-
 if [ $USERID -ne 0 ]; then
     echo "ERROR: Please run this script with root privileges"
     exit 1
 fi
+
+LOGS_FOLDER="/var/log/shell-roboshop"
+SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" 
+
+mkdir -p $LOGS_FOLDER &>>$LOG_FILE
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
