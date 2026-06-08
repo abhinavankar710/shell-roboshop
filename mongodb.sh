@@ -53,7 +53,7 @@ if [ $? -ne 0 ]; then
     Installation_Exit_Code=$(wait $pid)
     printf "\r\033[K"
 
-    VALIDATE $Installation_Exit_Code "MongoDB Installation"
+    VALIDATE "$Installation_Exit_Code" "MongoDB Installation"
 else 
     echo -e "MongoDB already exists$Y SKIPPING$N installation of MongoDB" | tee -a $LOG_FILE
 fi
