@@ -24,7 +24,7 @@ LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" 
 
-mkdir -p $LOGS_FOLDER
+mkdir -p $LOGS_FOLDER 
 echo "Script execution started at: $(date)" | tee -a $LOG_FILE
 
 if [ $USERID -ne 0 ]; then
@@ -52,7 +52,7 @@ if [ $? -ne 0 ]; then
     spinner $pid
     wait $pid
     printf "\r\033[K"
-    
+
     VALIDATE $? "MongoDB Installation"
 else 
     echo -e "MongoDB already exists$Y SKIPPING$N installation of MongoDB" | tee -a $LOG_FILE
