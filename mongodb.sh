@@ -50,10 +50,10 @@ if [ $? -ne 0 ]; then
     dnf install -y --nocrypto mongodb-org &>>$LOG_FILE &   
     pid=$!         # 👆--nocrypto is used to avoid GPG key issues during installation.
     spinner $pid   #  Or simply to avoid the spinner to mix with intallation exit code and print wrong status of installation.
-    wait $pid
+    Installation_Exit_Code=$(wait $pid)
     printf "\r\033[K"
 
-    VALIDATE $? "MongoDB Installation"
+    VALIDATE $Installation_Exit_Code "MongoDB Installation"
 else 
     echo -e "MongoDB already exists$Y SKIPPING$N installation of MongoDB" | tee -a $LOG_FILE
 fi
