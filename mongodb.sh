@@ -47,9 +47,9 @@ VALIDATE $? "MongoDB Repository Setup" | tee -a $LOG_FILE
 dnf list installed mongodb-org &>>$LOG_FILE
 if [ $? -ne 0 ]; then
     echo -ne "${Y}Installing${N} MongoDB"
-    dnf install -y mongodb-org &>>$LOG_FILE &   
-    pid=$!
-    spinner $pid
+    dnf install -y --nocrypto mongodb-org &>>$LOG_FILE &   
+    pid=$!         # 👆--nocrypto is used to avoid GPG key issues during installation.
+    spinner $pid   #  Or simply to avoid the spinner to mix with intallation exit code and print wrong status of installation.
     wait $pid
     printf "\r\033[K"
 
