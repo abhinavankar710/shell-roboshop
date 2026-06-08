@@ -49,7 +49,7 @@ if [ $? -ne 0 ]; then
     # --- THE FIX STARTS HERE ---
     # We run the install AND save the exit code to a file inside this block ( )
     (
-        dnf install -y --nocrypto mongodb-org &>>$LOG_FILE
+        dnf install -y mongodb-org &>>$LOG_FILE
         echo $? > /tmp/mongo_status
     ) & 
     
