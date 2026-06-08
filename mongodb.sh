@@ -42,22 +42,24 @@ VALIDATE(){
 }
 
 cp mongodb.repo /etc/yum.repos.d/mongodb.repo &>>$LOG_FILE
+VALIDATE $? "MongoDB Repository Setup" | tee -a $LOG_FILE
 
 dnf list installed mongodb-org &>>$LOG_FILE
 if [ $? -ne 0 ]; then
-    echo -ne "$Y{Installing}$N MongoDB"
+    echo -ne "${Y}Installing${N} MongoDB"
     dnf install -y mongodb-org &>>$LOG_FILE &   
     pid=$!
     spinner $pid
     wait $pid
     printf "\r\033[K"
+    
     VALIDATE $? "MongoDB Installation"
 else 
     echo -e "MongoDB already exists$Y SKIPPING$N installation of MongoDB" | tee -a $LOG_FILE
 fi
 
-systemctl enable mongod
-VALIDATE $? "Enabling MongoDB Service"
+systemctl enable mongod &>>$LOG_FILE
+VALIDATE $? "Enabling MongoDB Service" | tee -a $LOG_FILE
 
-systemctl start mongod
-VALIDATE $? "Starting MongoDB Service" 
+systemctl start mongod &>>$LOG_FILE
+VALIDATE $? "Starting MongoDB Service" | tee -a $LOG_FILE
