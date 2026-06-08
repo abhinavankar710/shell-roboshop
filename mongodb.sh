@@ -41,7 +41,7 @@ VALIDATE(){
     fi
 }
 
-cp mongodb.repo /etc/yum.repos.d/mongodb.repo &>>$LOG_FILE
+cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
 VALIDATE $? "MongoDB Repository Setup" | tee -a $LOG_FILE
 
 dnf list installed mongodb-org &>>$LOG_FILE
