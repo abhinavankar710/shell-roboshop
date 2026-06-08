@@ -10,7 +10,6 @@ spinner() {
             sleep $delay
         done
     done
-    # Clear line after spinner ends
     printf "\r\033[K"
 }
 
@@ -27,13 +26,12 @@ fi
 
 LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
-LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" 
-
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 mkdir -p $LOGS_FOLDER
 echo "Script execution started at: $(date)" | tee -a $LOG_FILE
 
 VALIDATE(){
-    if [ "$1" -ne 0 ]; then
+    if [ $1 -ne 0 ]; then
         echo -e "$2...$R✗ Failed$N" | tee -a $LOG_FILE
         exit 1
     else
@@ -42,24 +40,36 @@ VALIDATE(){
 }
 
 cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
-VALIDATE $? "MongoDB Repository Setup" | tee -a $LOG_FILE
+VALIDATE $? "MongoDB Repository Setup"
 
 dnf list installed mongodb-org &>>$LOG_FILE
 if [ $? -ne 0 ]; then
     echo -ne "${Y}Installing${N} MongoDB"
-    dnf install -y --nocrypto mongodb-org &>>$LOG_FILE &   
-    pid=$!         # 👆--nocrypto is used to avoid GPG key issues during installation.
-    spinner $pid   #  Or simply to avoid the spinner to mix with intallation exit code and print wrong status of installation.
-    Installation_Exit_Code=$(wait $pid)
-    printf "\r\033[K"
-
-    VALIDATE "$Installation_Exit_Code" "MongoDB Installation"
-else 
+    
+    # --- THE FIX STARTS HERE ---
+    # We run the install AND save the exit code to a file inside this block ( )
+    (
+        dnf install -y --nocrypto mongodb-org &>>$LOG_FILE
+        echo $? > /tmp/mongo_status
+    ) & 
+    
+    pid=$!
+    spinner $pid
+    wait $pid
+    
+    # We read the code from the file so it is NEVER empty
+    EXIT_STATUS=$(cat /tmp/mongo_status)
+    
+    # We validate using that solid number
+    VALIDATE $EXIT_STATUS "MongoDB Installation"
+    # --- THE FIX ENDS HERE ---
+    
+else
     echo -e "MongoDB already exists$Y SKIPPING$N installation of MongoDB" | tee -a $LOG_FILE
 fi
 
 systemctl enable mongod &>>$LOG_FILE
-VALIDATE $? "Enabling MongoDB Service" | tee -a $LOG_FILE
+VALIDATE $? "Enabling MongoDB Service"
 
 systemctl start mongod &>>$LOG_FILE
-VALIDATE $? "Starting MongoDB Service" | tee -a $LOG_FILE
+VALIDATE $? "Starting MongoDB Service"
