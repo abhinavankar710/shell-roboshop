@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "Script execution started at: $(date)" | tee -a $LOG_FILE
-
 spinner() {
     local pid=$1
     local delay=0.1
@@ -32,6 +30,7 @@ SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" 
 
 mkdir -p $LOGS_FOLDER &>>$LOG_FILE
+echo "Script execution started at: $(date)" | tee -a $LOG_FILE
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
