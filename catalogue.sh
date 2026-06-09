@@ -26,6 +26,7 @@ fi
 
 LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
+SCRIPT_DIR=$PWD
 MONGODB_HOST="mongodb.ankar.space"
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 mkdir -p $LOGS_FOLDER
@@ -107,7 +108,7 @@ spinner $pid "Installing NodeJS Dependencies"
 wait $pid
 VALIDATE $? "Installing NodeJS Dependencies"
 
-cp catalogue.service /etc/systemd/system/catalogue.service &>>$LOG_FILE
+cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service &>>$LOG_FILE
 VALIDATE $? "Copying SystemD Catalogue Service File"
 
 systemctl daemon-reload &>>$LOG_FILE &
@@ -122,7 +123,7 @@ spinner $pid "Enabling Catalogue Service"
 wait $pid
 VALIDATE $? "Enabling Catalogue Service"
 
-cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE 
+cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE 
 VALIDATE $? "Setting up MongoDB Repository File"
 
 dnf list installed mongodb-mongosh -y &>>$LOG_FILE
