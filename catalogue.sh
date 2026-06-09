@@ -80,13 +80,13 @@ fi
 
 useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE &
 pid=$!
-spinner $pid "Creating roboshop User"
+spinner $pid "${N}Creating roboshop User"
 wait $pid
-VALIDATE $? "Creating roboshop User"
+VALIDATE $? "${N}Creating roboshop User"
 
 rm -rf /app &>>$LOG_FILE
 mkdir /app &>>$LOG_FILE
-VALIDATE $? "Creating Application Directory"
+VALIDATE $? "${N}Creating Application Directory"
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE &
 pid=$!
