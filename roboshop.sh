@@ -15,6 +15,10 @@ do
     if [ "$instance" != "frontend" ]; then
         IP=$(aws ec2 describe-instances --instance-ids "$INSTANCE_ID" --query 'Reservations[0].Instances[0].PrivateIpAddress' --output text)
         echo "Private IP of the Instance "$instance" is: "$IP""
+        
+        PIP=$(aws ec2 describe-instances --instance-ids "$INSTANCE_ID" --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+        echo "Public IP of the Instance "$instance" is: "$PIP""
+        
         RECORD_NAME="$instance.$DOMAIN_NAME"
         IP_TYPE="(Private)"
 
