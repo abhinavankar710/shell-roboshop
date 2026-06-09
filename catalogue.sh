@@ -83,17 +83,17 @@ if [ $? -ne 0 ]; then
     # ONLY runs if the user does NOT exist
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE &
     pid=$!
-    spinner $pid "${N}Creating roboshop User"
+    spinner $pid "\'Creating\' roboshop User"
     wait $pid
-    VALIDATE $? "${N}Creating roboshop User"
+    VALIDATE $? "\'Creating\' roboshop User"
 else
     # Runs safely if the user is already there
-    echo "User roboshop already exists... $Y SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
+    echo -e "User roboshop already exists... $Y SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
 fi
 
 rm -rf /app &>>$LOG_FILE
 mkdir /app &>>$LOG_FILE
-VALIDATE $? "${N}Creating Application Directory"
+VALIDATE $? "\'Creating\' Application Directory"
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE &
 pid=$!
@@ -160,9 +160,9 @@ fi
 
 mongosh --host $MONGODB_HOST --file /app/db/master-data.js &>>$LOG_FILE &
 pid=$!
-spinner $pid "Loading Master Data to MongoDB"
+spinner $pid "\'Loading\' Master Data to MongoDB"
 wait $pid
-VALIDATE $? "Loading Master Data to MongoDB"
+VALIDATE $? "\'Loading\' Master Data to MongoDB"
 
 systemctl restart catalogue &>>$LOG_FILE &
 pid=$!
