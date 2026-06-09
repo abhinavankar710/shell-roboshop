@@ -78,11 +78,18 @@ else
     echo -e "NodeJS already exists$Y SKIPPING$N installation of NodeJS" | tee -a $LOG_FILE
 fi
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE &
-pid=$!
-spinner $pid "${N}Creating roboshop User"
-wait $pid
-VALIDATE $? "${N}Creating roboshop User"
+id roboshop &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    # ONLY runs if the user does NOT exist
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE &
+    pid=$!
+    spinner $pid "${N}Creating roboshop User"
+    wait $pid
+    VALIDATE $? "${N}Creating roboshop User"
+else
+    # Runs safely if the user is already there
+    echo "User roboshop already exists... $Y SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
+fi
 
 rm -rf /app &>>$LOG_FILE
 mkdir /app &>>$LOG_FILE
