@@ -74,9 +74,9 @@ if [ $? -ne 0 ]; then
 else
     # Runs safely if the user is already there
     echo -e "User roboshop already exists...${Y}SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
-fisfds
+fi
 
-mkdir -p /app &>>$LOG_FILE
+mkdirsfds -p /app &>>$LOG_FILE
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE &
 pid=$!
