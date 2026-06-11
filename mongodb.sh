@@ -6,7 +6,7 @@ spinner() {
     local spinstr='|/-\'
     while kill -0 $pid 2>/dev/null; do
         for i in $(seq 0 $((${#spinstr}-1))); do
-            printf "\r${N}Installing MongoDB... [%c]" "${spinstr:$i:1}"
+            printf "\rInstalling MongoDB... [%c]" "${spinstr:$i:1}"
             sleep $delay
         done
     done
@@ -72,7 +72,7 @@ systemctl enable mongod &>>$LOG_FILE
 VALIDATE $? "Enabling MongoDB Service"
 
 systemctl start mongod &>>$LOG_FILE
-VALIDATE $? "Starting MongoDB Service"
+VALIDATE $? "Launching MongoDB Service"
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 VALIDATE $? "Allowing Remote Connections to MongoDB"
