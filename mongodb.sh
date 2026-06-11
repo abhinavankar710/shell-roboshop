@@ -72,7 +72,7 @@ systemctl enable mongod &>>$LOG_FILE
 VALIDATE $? "Enabling MongoDB Service"
 
 systemctl start mongod &>>$LOG_FILE
-VALIDATE $? "Launching MongoDB Service"
+VALIDATE $? "Executing MongoDB Service"
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 VALIDATE $? "Allowing Remote Connections to MongoDB"
