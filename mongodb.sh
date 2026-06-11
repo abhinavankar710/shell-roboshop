@@ -6,7 +6,7 @@ spinner() {
     local spinstr='|/-\'
     while kill -0 $pid 2>/dev/null; do
         for i in $(seq 0 $((${#spinstr}-1))); do
-            printf "\rInstalling MongoDB... [%c]" "${spinstr:$i:1}"
+            printf "\r${N}Installing MongoDB... [%c]" "${spinstr:$i:1}"
             sleep $delay
         done
     done
@@ -32,10 +32,10 @@ echo "Script execution started at: $(date)" | tee -a $LOG_FILE
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-        echo -e "$2...$R✗ Failed$N" | tee -a $LOG_FILE
+        echo -e "${N}$2...$R✗ Failed$N" | tee -a $LOG_FILE
         exit 1
     else
-        echo -e "$2...$G✓ Success$N" | tee -a $LOG_FILE
+        echo -e "${N}$2...$G✓ Success$N" | tee -a $LOG_FILE
     fi
 }
 
@@ -72,7 +72,7 @@ systemctl enable mongod &>>$LOG_FILE
 VALIDATE $? "Enabling MongoDB Service"
 
 systemctl start mongod &>>$LOG_FILE
-VALIDATE $? "${N}Starting MongoDB Service"
+VALIDATE $? "Starting MongoDB Service"
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 VALIDATE $? "Allowing Remote Connections to MongoDB"
