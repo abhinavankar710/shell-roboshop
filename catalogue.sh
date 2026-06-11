@@ -91,7 +91,7 @@ else
     echo -e "User roboshop already exists...${Y}SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
 fi
 
-mkdir /app &>>$LOG_FILE
+mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Setting up Application Directory"
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE &
