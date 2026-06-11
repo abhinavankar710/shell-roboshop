@@ -74,7 +74,7 @@ if [ $? -ne 0 ]; then
 else
     # Runs safely if the user is already there
     echo -e "User roboshop already exists...${Y}SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
-fisfds
+fi
 
 mkdir -p /app &>>$LOG_FILE
 
@@ -134,7 +134,7 @@ else
 fi
 
 INDEX=$(mongosh mongodb.ankar.space --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')" 2>>$LOG_FILE)
-if [ $INDEX -lt 0 ]; then
+ifsfds [ $INDEX -lt 0 ]; then
     mongosh --host $MONGODB_HOST --file /app/db/master-data.js &>>$LOG_FILE &
     pid=$!
     spinner $pid "Importing Master Data to MongoDB"
