@@ -88,11 +88,9 @@ if [ $? -ne 0 ]; then
     VALIDATE $? "Setting up roboshop User"
 else
     # Runs safely if the user is already there
-    echo -e "User roboshop already exists... $Y SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
+    echo -e "User roboshop already exists...${Y}SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
 fi
 
-rm -rf /app &>>$LOG_FILE
-echo -e "Removing old application directory if exists"
 mkdir /app &>>$LOG_FILE
 VALIDATE $? "Setting up Application Directory"
 
@@ -102,7 +100,12 @@ spinner $pid "Downloading Application Code"
 wait $pid
 VALIDATE $? "Downloading Application Code"
 
-cd /app 
+cd /app
+VALIDATE $? "Changing to application Directory"
+
+rm -rf /app/* &>>$LOG_FILE
+VALIDATE $? "Removing existing Application Code"
+
 unzip -o /tmp/catalogue.zip &>>$LOG_FILE &
 pid=$!
 spinner $pid "Extracting Application Code"
@@ -159,11 +162,16 @@ else
     echo -e "MongoDB Client already exists$Y SKIPPING$N installation of MongoDB Client" | tee -a $LOG_FILE
 fi
 
-mongosh --host $MONGODB_HOST --file /app/db/master-data.js &>>$LOG_FILE &
-pid=$!
-spinner $pid "Importing Master Data to MongoDB"
-wait $pid
-VALIDATE $? "Importing Master Data to MongoDB"
+INDEX=$(mongosh mongodb.ankar.space --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')" 2>>$LOG_FILE)
+if [ $INDEX -lt 0 ]; then
+    mongosh --host $MONGODB_HOST --file /app/db/master-data.js &>>$LOG_FILE &
+    pid=$!
+    spinner $pid "Importing Master Data to MongoDB"
+    wait $pid
+    VALIDATE $? "Importing Master Data to MongoDB"
+else
+    echo -e "Master data already exists$Y SKIPPING$N import" | tee -a $LOG_FILE
+fi
 
 systemctl restart catalogue &>>$LOG_FILE &
 pid=$!
