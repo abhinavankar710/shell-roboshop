@@ -50,7 +50,7 @@ if [ $? -ne 0 ]; then
     # --- THE FIX STARTS HERE ---
     # We run the install AND save the exit code to a file inside this block ( )
     (
-        dnf install -y nodejssfds &>>$LOG_FILE
+        dnf install -y nodejs &>>$LOG_FILE
         echo $? > /tmp/nodejs_status
     ) & 
     
@@ -74,7 +74,7 @@ if [ $? -ne 0 ]; then
 else
     # Runs safely if the user is already there
     echo -e "User roboshop already exists...${Y}SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
-fi
+fisfds
 
 mkdir -p /app &>>$LOG_FILE
 
