@@ -28,6 +28,7 @@ LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 mkdir -p $LOGS_FOLDER
+START_TIME=$(date +%s)
 echo "Script execution started at: $(date)" | tee -a $LOG_FILE
 
 VALIDATE(){
@@ -80,3 +81,8 @@ validate $? "Enabling Redis"
 
 systemctl start redis &>>$LOG_FILE
 validate $? "Executing Redis"
+
+END_TIME=$(date +%s)
+TOTAL_TIME=$((END_TIME - START_TIME))
+echo "Script execution completed at: $(date)" | tee -a $LOG_FILE
+echo "Total time taken: $TOTAL_TIME seconds" | tee -a $LOG_FILE
