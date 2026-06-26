@@ -28,7 +28,7 @@ LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 mkdir -p $LOGS_FOLDER
-SCRIPT_DIR=$(pwd)
+SCRIPT_DIR=$pwd
 START_TIME=$(date +%s)
 echo "Script execution started at: $(date)" | tee -a $LOG_FILE
 
