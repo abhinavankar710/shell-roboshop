@@ -6,7 +6,7 @@ spinner() {
     local spinstr='|/-\'
     while kill -0 $pid 2>/dev/null; do
         for i in $(seq 0 $((${#spinstr}-1))); do
-            printf "\rInstalling MongoDB... [%c]" "${spinstr:$i:1}"
+            printf "\r$2... [%c]" "${spinstr:$i:1}"
             sleep $delay
         done
     done
