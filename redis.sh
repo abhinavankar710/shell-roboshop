@@ -40,13 +40,13 @@ VALIDATE(){
     fi
 }
 
-dnf module disable redis -y &>>$LOG_FILE
+dnf module disable redis -y &>>$LOG_FILE &
 pid=$!
 spinner $pid "Disabling Default Redis Module"
 wait $pid
 VALIDATE $? "Disabling Default Redis Module"
 
-dnf module enable redis:7 -y &>>$LOG_FILE
+dnf module enable redis:7 -y &>>$LOG_FILE &
 pid=$!
 spinner $pid "Enabling Redis 7 Module"
 wait $pid
@@ -78,7 +78,7 @@ else
     echo -e "Redis already exists$Y SKIPPING$N installation of Redis" | tee -a $LOG_FILE
 fi
 
-sed -i 's/127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf &>>$LOG_FILE
+sed -i 's/127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf &>>$LOG_FILE &
 pid=$!
 spinner $pid "Allowing Remote Connections to Redis"
 wait $pid
@@ -88,13 +88,13 @@ spinner $pid "Disabling Redis Protected Mode"
 wait $pid
 VALIDATE $? "Disabling Redis Protected Mode"
 
-systemctl enable redis &>>$LOG_FILE
+systemctl enable redis &>>$LOG_FILE &
 pid=$!
 spinner $pid "Enabling Redis Service"
 wait $pid
 VALIDATE $? "Enabling Redis"
 
-systemctl start redis &>>$LOG_FILE
+systemctl start redis &>>$LOG_FILE &
 pid=$!
 spinner $pid "Executing Redis Service"
 wait $pid
