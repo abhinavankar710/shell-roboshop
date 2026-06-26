@@ -52,10 +52,8 @@ spinner $pid "Enabling Redis 7 Module"
 wait $pid
 VALIDATE $? "Enabling Redis 7 Module"
 
-dnf list installed redis &>>$LOG_FILE
-if [ $? -ne 0 ]; then
-    echo -ne "${Y}Installing${N} Redis"
-    
+dnf list installed redis &>>$LOG_FILE 
+if [ $? -ne 0 ]; then  
     # --- THE FIX STARTS HERE ---
     # We run the install AND save the exit code to a file inside this block ( )
     (
@@ -64,7 +62,7 @@ if [ $? -ne 0 ]; then
     ) & 
     
     pid=$!
-    spinner $pid
+    spinner $pid "Installing Redis"
     wait $pid
     
     # We read the code from the file so it is NEVER empty

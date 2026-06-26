@@ -40,10 +40,8 @@ VALIDATE(){
     fi
 }
 
-dnf list installed mysql-server &>>$LOG_FILE
-if [ $? -ne 0 ]; then
-    echo -ne "${Y}Installing${N} MySQL"
-    
+dnf list installed mysql-server &>>$LOG_FILE 
+if [ $? -ne 0 ]; then  
     # --- THE FIX STARTS HERE ---
     # We run the install AND save the exit code to a file inside this block ( )
     (
@@ -52,7 +50,7 @@ if [ $? -ne 0 ]; then
     ) & 
     
     pid=$!
-    spinner $pid
+    spinner $pid "Installing MySQL"
     wait $pid
     
     # We read the code from the file so it is NEVER empty
@@ -63,7 +61,7 @@ if [ $? -ne 0 ]; then
     # --- THE FIX ENDS HERE ---
     
 else
-    echo -e "MySQL already exists$Y SKIPPING$N installation of MySQL    " | tee -a $LOG_FILE
+    echo -e "MySQL already exists$Y SKIPPING$N installation of MySQL" | tee -a $LOG_FILE
 fi
 
 systemctl enable mysqld &>>$LOG_FILE &
