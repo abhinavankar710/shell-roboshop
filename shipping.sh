@@ -115,16 +115,22 @@ else
     echo -e "MySQL already exists$Y SKIPPING$N installation of MySQL" | tee -a $LOG_FILE
 fi
 
-mysql -h mysql.ankar.space -uroot -pRoboShop@1 < /app/db/schema.sql
-VALIDATE $? "Loading Schema"
+mysql -h mysql.ankar.space -uroot -pRoboShop@1 -e "use cities" &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    mysql -h mysql.ankar.space -uroot -pRoboShop@1 < /app/db/schema.sql &>>$LOG_FILE
+    VALIDATE $? "Loading Schema"
 
-mysql -h mysql.ankar.space -uroot -pRoboShop@1 < /app/db/app-user.sql
-VALIDATE $? "Loading App User"
+    mysql -h mysql.ankar.space -uroot -pRoboShop@1 < /app/db/app-user.sql &>>$LOG_FILE
+    VALIDATE $? "Loading App User"
 
-mysql -h mysql.ankar.space -uroot -pRoboShop@1 < /app/db/master-data.sql
-VALIDATE $? "Loading Master Data"
+    mysql -h mysql.ankar.space -uroot -pRoboShop@1 < /app/db/master-data.sql &>>$LOG_FILE
+    VALIDATE $? "Loading Master Data"
+else
+    echo -e "Shipping data already loaded ...{$Y}SKIPPING$N" | tee -a $LOG_FILE
+fi
 
-systemctl restart shipping
+
+systemctl restart shipping &>>$LOG_FILE
 VALIDATE $? "Restarting Shipping Service"
 
 END_TIME=$(date +%s)
