@@ -84,18 +84,18 @@ if [ $? -ne 0 ]; then
     # ONLY runs if the user does NOT exist
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE &
     pid=$!
-    spinner $pid "Setting up roboshop User"
+    spinner $pid "Setting up roboshop user"
     wait $pid
-    VALIDATE $? "Setting up roboshop User"
+    VALIDATE $? "Setting up roboshop user"
 else
     # Runs safely if the user is already there
-    echo -e "User roboshop already exists...${Y}SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
+    echo -e "user roboshop already exists...${Y}SKIPPING$N creation of roboshop user" | tee -a $LOG_FILE
 fi
 
 mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Setting up Application Directory"
 
-curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE &
+curl -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>>$LOG_FILE &
 pid=$!
 spinner $pid "Downloading Application Code"
 wait $pid
@@ -107,7 +107,7 @@ VALIDATE $? "Changing to application Directory"
 rm -rf /app/* &>>$LOG_FILE
 VALIDATE $? "Removing existing Application Code"
 
-unzip -o /tmp/user.zip &>>$LOG_FILE &
+unzip -o /tmp/cart.zip &>>$LOG_FILE &
 pid=$!
 spinner $pid "Extracting Application Code"
 wait $pid
@@ -120,8 +120,8 @@ spinner $pid "Installing NodeJS Dependencies"
 wait $pid
 VALIDATE $? "Installing NodeJS Dependencies"
 
-cp $SCRIPT_DIR/user.service /etc/systemd/system/user.service &>>$LOG_FILE
-VALIDATE $? "Copying SystemD User Service File"
+cp $SCRIPT_DIR/cart.service /etc/systemd/system/cart.service &>>$LOG_FILE
+VALIDATE $? "Copying SystemD Cart Service File"
 
 systemctl daemon-reload &>>$LOG_FILE &
 pid=$!
@@ -129,19 +129,19 @@ spinner $pid "Reloading SystemD"
 wait $pid
 VALIDATE $? "Reloading SystemD"
 
-systemctl enable user &>>$LOG_FILE &
+systemctl enable cart &>>$LOG_FILE &
 pid=$!
-spinner $pid "Enabling User Service"
+spinner $pid "Enabling Cart Service"
 wait $pid
-VALIDATE $? "Enabling User Service"
+VALIDATE $? "Enabling Cart Service"
 
-systemctl restart user &>>$LOG_FILE &
+systemctl restart cart &>>$LOG_FILE &
 pid=$!
-spinner $pid "Restarting User Service"
+spinner $pid "Restarting Cart Service"
 wait $pid
-VALIDATE $? "Restarting User Service"
+VALIDATE $? "Restarting Cart Service"
 
-echo -e "\n${G}User Service Setup Completed Successfully${N}\n" | tee -a $LOG_FILE
+echo -e "\n${G}Cart Service Setup Completed Successfully${N}\n" | tee -a $LOG_FILE
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( END_TIME - START_TIME ))
