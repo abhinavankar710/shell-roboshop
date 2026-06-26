@@ -41,10 +41,16 @@ VALIDATE(){
 }
 
 dnf module disable redis -y &>>$LOG_FILE
-validate $? "Disabling Default Redis Module"
+pid=$!
+spinner $pid "Disabling Default Redis Module"
+wait $pid
+VALIDATE $? "Disabling Default Redis Module"
 
 dnf module enable redis:7 -y &>>$LOG_FILE
-validate $? "Enabling Redis 7 Module"
+pid=$!
+spinner $pid "Enabling Redis 7 Module"
+wait $pid
+VALIDATE $? "Enabling Redis 7 Module"
 
 dnf list installed redis &>>$LOG_FILE
 if [ $? -ne 0 ]; then
@@ -73,14 +79,26 @@ else
 fi
 
 sed -i 's/127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf &>>$LOG_FILE
-validate $? "Allowing Remote Connections to Redis"
-validate $? "Disabling Redis Protected Mode"
+pid=$!
+spinner $pid "Allowing Remote Connections to Redis"
+wait $pid
+VALIDATE $? "Allowing Remote Connections to Redis"
+pid=$!
+spinner $pid "Disabling Redis Protected Mode"
+wait $pid
+VALIDATE $? "Disabling Redis Protected Mode"
 
 systemctl enable redis &>>$LOG_FILE
-validate $? "Enabling Redis"
+pid=$!
+spinner $pid "Enabling Redis Service"
+wait $pid
+VALIDATE $? "Enabling Redis"
 
 systemctl start redis &>>$LOG_FILE
-validate $? "Executing Redis"
+pid=$!
+spinner $pid "Executing Redis Service"
+wait $pid
+VALIDATE $? "Executing Redis"
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( END_TIME - START_TIME ))
