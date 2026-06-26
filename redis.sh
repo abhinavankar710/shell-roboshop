@@ -78,14 +78,8 @@ else
     echo -e "Redis already exists$Y SKIPPING$N installation of Redis" | tee -a $LOG_FILE
 fi
 
-sed -i -e 's/127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf &>>$LOG_FILE &
-pid=$!
-spinner $pid "Allowing Remote Connections to Redis"
-wait $pid
+sed -i -e 's/127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf &>>$LOG_FILE
 VALIDATE $? "Allowing Remote Connections to Redis"
-pid=$!
-spinner $pid "Disabling Redis Protected Mode"
-wait $pid
 VALIDATE $? "Disabling Redis Protected Mode"
 
 systemctl enable redis &>>$LOG_FILE &
