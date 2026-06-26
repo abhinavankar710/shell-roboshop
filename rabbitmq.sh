@@ -80,9 +80,17 @@ spinner $pid "Starting RabbitMQ Service"
 wait $pid
 VALIDATE $? "Starting RabbitMQ Service"
 
-rabbitmqctl add_user roboshop roboshop123 &>>$LOG_FILE
-VALIDATE $? "Adding RabbitMQ User"
+# FIXED: Checks for presence before attempting creation
+rabbitmqctl list_users --quiet | grep -q "^roboshop\s"
+if [ $? -ne 0 ]; then
+    rabbitmqctl add_user roboshop roboshop123 &>>$LOG_FILE
+    VALIDATE $? "Adding RabbitMQ User"
+else
+    rabbitmqctl change_password roboshop roboshop123 &>>$LOG_FILE
+    echo -e "RabbitMQ user already exists$Y UPDATING$N password instead" | tee -a $LOG_FILE
+fi
 
+# Permissions can be safely reapplied over existing configurations
 rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>>$LOG_FILE
 VALIDATE $? "Setting RabbitMQ User Permissions"
 
