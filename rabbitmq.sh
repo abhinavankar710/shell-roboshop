@@ -41,6 +41,9 @@ VALIDATE(){
     fi
 }
 
+cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
+VALIDATE $? "RabbitMQ Repository Setup"
+
 dnf list installed rabbitmq-server &>>$LOG_FILE 
 if [ $? -ne 0 ]; then  
     # --- THE FIX STARTS HERE ---
@@ -82,31 +85,6 @@ VALIDATE $? "Adding RabbitMQ User"
 
 rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>>$LOG_FILE
 VALIDATE $? "Setting RabbitMQ User Permissions"
-
-cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
-dnf list installed rabbitmq-server &>>$LOG_FILE 
-if [ $? -ne 0 ]; then  
-    # --- THE FIX STARTS HERE ---
-    # We run the install AND save the exit code to a file inside this block ( )
-    (
-        dnf install -y rabbitmq-server &>>$LOG_FILE
-        echo $? > /tmp/rabbitmq_status
-    ) & 
-    
-    pid=$!
-    spinner $pid "Installing RabbitMQ"
-    wait $pid
-    
-    # We read the code from the file so it is NEVER empty
-    EXIT_STATUS=$(cat /tmp/rabbitmq_status)
-    
-    # We validate using that solid number
-    VALIDATE $EXIT_STATUS "RabbitMQ Installation"
-    # --- THE FIX ENDS HERE ---
-    
-else
-    echo -e "RabbitMQ already exists$Y SKIPPING$N installation of RabbitMQ" | tee -a $LOG_FILE
-fi
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( END_TIME - START_TIME ))
