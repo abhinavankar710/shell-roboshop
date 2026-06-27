@@ -135,7 +135,7 @@ fi
 
 INDEX=$(mongosh mongodb.ankar.space --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')" 2>>$LOG_FILE)
 if [ $INDEX -lt 0 ]; then
-    mongosh --host $MONGODB_HOST --file /app/db/master-data.js &>>$LOG_FILE &
+    mongosh --host mongodb.ankar.space --file /app/db/master-data.js &>>$LOG_FILE &
     pid=$!
     spinner $pid "Importing Master Data to MongoDB"
     wait $pid

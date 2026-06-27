@@ -27,7 +27,6 @@ fi
 LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 SCRIPT_DIR=$PWD
-MONGODB_HOST="mongodb.ankar.space"
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 mkdir -p $LOGS_FOLDER
 echo "Script execution started at: $(date)" | tee -a $LOG_FILE
@@ -164,7 +163,7 @@ fi
 
 INDEX=$(mongosh mongodb.ankar.space --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')" 2>>$LOG_FILE)
 if [ $INDEX -lt 0 ]; then
-    mongosh --host $MONGODB_HOST --file /app/db/master-data.js &>>$LOG_FILE &
+    mongosh --host mongodb.ankar.space --file /app/db/master-data.js &>>$LOG_FILE &
     pid=$!
     spinner $pid "Importing Master Data to MongoDB"
     wait $pid
